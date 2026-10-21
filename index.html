@@ -8,366 +8,91 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,650&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#fdfdfc;
-    --ink:#161613;
-    --ink2:#5c5b55;
-    --ink3:#98968d;
-    --line:#e5e3dc;
-    --accent:#1f5c46;
-    --accent-ink:#fdfdfc;
-    --accent-tint:#e8f1ec;
-    --rust:#a8471f;
-  }
-  html.dark{
-    --bg:#0a0f1c;
-    --ink:#eef1f7;
-    --ink2:#a9b2c5;
-    --ink3:#66708a;
-    --line:#1f2940;
-    --accent:#5fbf98;
-    --accent-ink:#0a0f1c;
-    --accent-tint:#12271f;
-    --rust:#e0895a;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family:'Inter',-apple-system,sans-serif; font-size:16px; line-height:1.7;
-    transition:background .3s ease, color .3s ease;
-  }
-  .serif{font-family:'Fraunces',Georgia,serif;}
-  h1,h2,h3{font-family:'Fraunces',Georgia,serif; font-weight:500; margin:0; letter-spacing:-0.015em;}
-  a{color:inherit; text-decoration:none;}
-  .amp{font-family:'Inter',sans-serif; font-style:normal; font-weight:500;}
-  ::selection{background:var(--accent); color:var(--accent-ink);}
-
-  #progress{position:fixed; top:0; left:0; height:2px; background:var(--accent); width:0%; z-index:1000;}
-
-  /* ===== overall page frame — 10% margin / 80% layout / 10% margin ===== */
-  /* within the 80% layout: sidebar = 20% of full width (25% of layout), main = 60% of full width (75% of layout) */
-  .layout{display:flex; width:76%; max-width:1800px; min-width:0; margin:0 auto;}
-  @media(max-width:940px){.layout{width:100%;}}
-
-  /* ===== sidebar ===== */
-  .sidebar{
-    width:25%; flex:0 0 25%; position:sticky; top:0; height:100vh; padding:42px 38px; box-sizing:border-box;
-    display:flex; flex-direction:column; border-right:1px solid var(--line);
-    overflow:hidden;
-  }
-  @media(max-width:1320px){.sidebar{width:280px; flex:0 0 280px;}}
-  .sb-portrait{
-    width:140px; aspect-ratio:1/1; flex:none; border-radius:50%; border:2px solid var(--bg);
-    box-shadow:0 0 0 1.5px var(--line), 0 0 0 5px color-mix(in srgb, var(--accent) 50%, transparent);
-    background:color-mix(in srgb, var(--ink3) 6%, transparent);
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
-    color:var(--ink3); margin-bottom:13px; overflow:hidden;
-  }
-  .sb-portrait svg{width:24px; height:24px; opacity:0.75;}
-  .sb-portrait span{font-size:11px; text-align:center; padding:0 22px; font-family:'Inter',sans-serif; line-height:1.4;}
-  .sb-portrait .portrait-initials{font-family:'Fraunces',Georgia,serif; font-size:34px; color:var(--accent); padding:0; font-weight:600;}
-  .sb-portrait .profile-photo{width:100%; height:100%; display:block; object-fit:cover; object-position:center;}
-  .sb-name{font-size:23px; line-height:1.22; margin-bottom:4px;}
-  .sb-tag{font-size:13.5px; color:var(--ink2); line-height:1.5; margin-bottom:18px;}
-  .sb-nav{display:flex; flex-direction:column; gap:1px;}
-  .sb-nav a{
-    font-size:14px; color:var(--ink2); padding:4px 14px; display:flex; align-items:center;
-    border-left:2px solid transparent; margin-left:-15px; border-radius:0 6px 6px 0;
-    transition:color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease;
-  }
-  .sb-nav a:hover{
-    color:var(--ink); background:color-mix(in srgb, var(--accent) 8%, transparent);
-    border-left-color:color-mix(in srgb, var(--accent) 45%, transparent); transform:translateX(3px);
-  }
-  .sb-nav a.active{color:var(--accent); border-left-color:var(--accent); font-weight:600; background:color-mix(in srgb, var(--accent) 10%, transparent);}
-  .sb-foot{display:flex; align-items:center; justify-content:space-between; padding-top:9px; border-top:1px solid var(--line); margin-top:auto; flex:none;}
-  .sb-socials{display:flex; gap:4px;}
-  .icon-btn{
-    width:33px; height:33px; border-radius:50%; border:1px solid var(--line); background:none;
-    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink2); transition:border-color .2s, color .2s;
-    flex:none;
-  }
-  .icon-btn:hover{border-color:var(--accent); color:var(--accent);}
-  .icon-btn svg{width:15px; height:15px;}
-
-  .mobile-bar{display:none;}
-  .mobile-nav{display:none;}
-  @media(max-width:940px){
-    .sidebar{display:none;}
-    .mobile-bar{
-      display:flex; align-items:center; justify-content:space-between; height:58px; padding:0 22px;
-      position:sticky; top:0; background:color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter:blur(8px);
-      border-bottom:1px solid var(--line); z-index:900;
-    }
-    .mobile-bar .mb-mark{
-      width:32px; height:32px; border-radius:50%; border:1.5px solid var(--ink); display:flex; align-items:center; justify-content:center;
-      font-family:'Fraunces',serif; font-weight:600; font-size:12px;
-    }
-    .mobile-nav{
-      display:block; position:fixed; top:58px; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--line);
-      max-height:0; overflow:hidden; transition:max-height .3s ease; z-index:890;
-    }
-    .mobile-nav.open{max-height:520px;}
-    .mobile-nav a{display:block; padding:13px 22px; font-size:14px; color:var(--ink2); border-top:1px solid var(--line); transition:background-color .18s ease, color .18s ease;}
-    .mobile-nav a:hover{color:var(--ink); background:color-mix(in srgb, var(--accent) 8%, transparent);}
-    .mobile-nav a.active{color:var(--accent);}
-  }
-
-  /* ===== main content ===== */
-  main{flex:0 0 75%; min-width:0; padding:0 56px;}
-  @media(max-width:1320px){main{flex:1 1 auto; padding:0 48px;}}
-  @media(max-width:940px){main{padding:0 24px; max-width:640px; margin:0 auto;}}
-
-  .hero{padding:60px 0 50px;}
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--accent);
-    font-family:'Inter',sans-serif; margin-bottom:22px;
-  }
-  .eyebrow .dot{width:6px; height:6px; border-radius:50%; background:var(--rust);}
-  .hero h1{font-size:clamp(34px,4.6vw,50px); line-height:1.08; font-weight:500;}
-  .hero .role{font-size:15.5px; color:var(--ink2); margin-top:18px; font-family:'Inter',sans-serif; }
-  .hero .role strong{color:var(--ink); font-weight:600;}
-  .hero p.body{margin-top:18px; color:var(--ink2); font-size:16.5px;  font-family:'Inter',sans-serif;}
-  .hero p.body strong{color:var(--ink); font-weight:600;}
-  .hero-cta{display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;}
-  .btn{
-    display:inline-flex; align-items:center; gap:8px; padding:11px 22px; font-size:14px; font-weight:600;
-    border-radius:3px; cursor:pointer; transition:opacity .15s, border-color .2s, background .2s; font-family:'Inter',sans-serif;
-  }
-  .btn-solid{background:var(--ink); color:var(--bg); border:1px solid var(--ink);}
-  .btn-solid:hover{opacity:.82;}
-  .btn-outline{background:transparent; color:var(--ink); border:1px solid var(--line);}
-  .btn-outline:hover{border-color:var(--ink);}
-
-  .tag-row{display:flex; flex-wrap:wrap; gap:8px; font-family:'Inter',sans-serif;}
-  .tag-row span{font-size:12.5px; padding:5px 12px; border-radius:20px; border:1px solid var(--line); color:var(--ink2);}
-  .label-sm{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink3); font-weight:600; margin-bottom:11px; font-family:'Inter',sans-serif;}
-
-  .fact-strip{display:flex; gap:12px; margin-top:32px; flex-wrap:wrap; font-family:'Inter',sans-serif;}
-  .fact-strip .f{padding:14px 18px; border:1px solid var(--line); border-radius:8px;}
-  .fact-strip .l{font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink3); font-weight:600;}
-  .fact-strip .v{font-size:13.5px; color:var(--ink); margin-top:4px; font-weight:500;}
-  @media(max-width:520px){
-    .fact-strip{flex-direction:column; gap:10px;}
-  }
-
-  section{padding:56px 0; border-top:1px solid var(--line);}
-  .sec-head{margin-bottom:32px;}
-  .sec-head .kicker{font-family:'Inter',sans-serif; font-size:12px; color:var(--ink3); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px;}
-  .sec-head h2{font-size:clamp(24px,3.2vw,30px); font-weight:500;}
-  .sec-head p{color:var(--ink2); font-size:14.5px; margin-top:9px; font-family:'Inter',sans-serif;}
-
-  /* current work */
-  .work-entry{padding:28px 0; border-top:1px solid var(--line);}
-  .work-entry:first-child{border-top:none; padding-top:0;}
-  .work-status{display:flex; align-items:center; gap:7px; margin-bottom:12px; font-family:'Inter',sans-serif;}
-  .work-status .dot{width:6px; height:6px; border-radius:50%; background:var(--rust);}
-  .work-status span{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--rust);}
-  .work-status .field{font-size:11.5px; color:var(--ink3); margin-left:8px; font-weight:500; text-transform:none; letter-spacing:0;}
-  .work-status .author-badge{font-size:11px; color:var(--ink3); font-weight:600; text-transform:none; letter-spacing:0; margin-left:0;}
-  .work-entry h3{font-size:21px; line-height:1.35; margin-bottom:12px; font-weight:500;}
-  .work-entry p{color:var(--ink2); font-size:15.5px; margin:0 0 12px; font-family:'Inter',sans-serif; max-width:62ch;}
-  .work-entry .venue{font-size:13px; color:var(--ink3); margin-bottom:16px; font-family:'Inter',sans-serif; font-style:italic;}
-  .media-box{
-    border-radius:4px; background:color-mix(in srgb, var(--ink3) 7%, transparent); border:1.5px dashed var(--line);
-    aspect-ratio:16/8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
-    color:var(--ink3); margin-bottom:14px;
-  }
-  .media-box svg{width:19px; height:19px; opacity:0.7;}
-  .media-box span{font-size:11.5px; text-align:center; padding:0 16px; font-family:'Inter',sans-serif;}
-  .more-toggle{
-    background:none; border:none; cursor:pointer; padding:0; font-family:'Inter',sans-serif;
-    font-size:13px; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:5px;
-  }
-  .more-toggle svg{width:12px; height:12px; transition:transform .25s;}
-  .more-toggle.open svg{transform:rotate(180deg);}
-  .more-panel{max-height:0; overflow:hidden; transition:max-height .35s ease;}
-  .more-panel.open{max-height:260px; margin-top:14px;}
-  .more-panel .inner{font-size:14px; color:var(--ink2); padding-top:14px; border-top:1px solid var(--line); font-family:'Inter',sans-serif;}
-
-  /* github / repo link */
-  .repo-link{
-    display:inline-flex; align-items:center; gap:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
-    color:var(--ink2); border:1px solid var(--line); border-radius:20px; padding:6px 13px; margin-bottom:14px;
-    transition:color .18s ease, border-color .18s ease, background-color .18s ease;
-  }
-  .repo-link svg{width:14px; height:14px;}
-  .repo-link:hover{color:var(--accent); border-color:var(--accent);}
-  .repo-link + .repo-link{margin-left:6px;}
-
-  /* research experience — plain timeline */
-  .ptimeline{display:flex; flex-direction:column; gap:16px;}
-  .p-item{
-    font-family:'Inter',sans-serif; border:1px solid var(--line); border-radius:8px; padding:22px 24px;
-  }
-  .p-item .year{font-size:12px; font-weight:700; color:var(--ink3); margin-bottom:6px; display:inline-block; letter-spacing:0.02em;}
-  .author-badge{
-    font-size:11px; font-weight:600; color:var(--ink3); border:1px dashed var(--line); border-radius:20px;
-    padding:2px 10px; margin-left:8px; margin-bottom:6px; display:inline-block;
-  }
-  .p-item h3{font-size:17px; margin-bottom:8px; line-height:1.4; font-weight:500;}
-  .p-item .supervisor{font-size:13.5px; color:var(--ink3); font-style:italic; margin-bottom:8px;}
-  .p-item p{font-size:15px; color:var(--ink2); margin:0 0 10px; }
-  .p-item .stack{font-size:12.5px; color:var(--ink3); margin-bottom:14px;}
-  .p-item .media-box{aspect-ratio:16/7; margin-bottom:14px;}
-
-  .row-list{border-top:1px solid var(--line); font-family:'Inter',sans-serif;}
-  .row-item{padding:19px 0; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;}
-  .row-item .rt{font-weight:600; font-size:15px;}
-  .row-item .rs{font-size:13.5px; color:var(--ink2); margin-top:3px;}
-  .row-badge{font-size:11px; font-weight:700; padding:4px 11px; border-radius:20px; white-space:nowrap; margin-top:2px;}
-  .row-badge.ongoing{color:var(--accent); background:var(--accent-tint);}
-  .row-badge.past{color:var(--ink3); background:color-mix(in srgb, var(--ink3) 12%, transparent);}
-
-  /* projects */
-  .proj-item{padding:28px 0; border-top:1px solid var(--line); font-family:'Inter',sans-serif;}
-  .proj-item:first-child{border-top:none; padding-top:0;}
-  .proj-item h3{font-size:17.5px; margin-bottom:9px; font-family:'Fraunces',serif; font-weight:500;}
-  .proj-item p{font-size:14.5px; color:var(--ink2); margin:0 0 10px; }
-  .proj-item .stack{font-size:12.5px; color:var(--ink3); margin-bottom:13px;}
-  .proj-media{
-    border-radius:4px; background:color-mix(in srgb, var(--ink3) 7%, transparent); border:1.5px dashed var(--line);
-    aspect-ratio:16/7; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--ink3);
-  }
-  .proj-media svg{width:18px; height:18px; opacity:0.7;}
-  .proj-media span{font-size:11px;}
-
-  .demo-visual{
-    width:100%; display:block; border-radius:8px; border:1px solid var(--line);
-    background:color-mix(in srgb, var(--ink3) 7%, transparent); margin:16px 0 14px;
-  }
-  .demo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0 14px;}
-  .demo-grid figure{margin:0; min-width:0;}
-  .demo-grid video{
-    width:100%; aspect-ratio:16/10; display:block; object-fit:contain; background:#05070b;
-    border:1px solid var(--line); border-radius:8px;
-  }
-  .demo-grid figcaption{font-size:11.5px; color:var(--ink3); margin-top:6px; text-align:center; font-family:'Inter',sans-serif;}
-  .visual-caption{font-size:12px; color:var(--ink3); margin:-6px 0 14px; font-family:'Inter',sans-serif;}
-  @media(max-width:700px){.demo-grid{grid-template-columns:1fr;}.demo-grid video{aspect-ratio:16/9;}}
-
-  .course-cols{display:grid; grid-template-columns:1fr 1fr; gap:36px; font-family:'Inter',sans-serif;}
-  @media(max-width:560px){.course-cols{grid-template-columns:1fr; gap:22px;}}
-  .course-cols h4{font-size:11.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink3); margin-bottom:12px; font-weight:600;}
-  .course-cols ul{list-style:none; margin:0; padding:0; border-top:1px solid var(--line);}
-  .course-cols li{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--line); font-size:14px;}
-  .badge{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:20px; background:color-mix(in srgb, var(--ink3) 12%, transparent); color:var(--ink3); white-space:nowrap;}
-  .badge.now{color:var(--accent); background:var(--accent-tint);}
-
-  .skill-line{padding:13px 0; border-top:1px solid var(--line); display:flex; gap:20px; flex-wrap:wrap; align-items:baseline; font-family:'Inter',sans-serif;}
-  .skill-line:last-child{border-bottom:1px solid var(--line);}
-  .skill-line .k{font-size:12.5px; font-weight:600; color:var(--ink3); min-width:126px;}
-  .skill-line .v{color:var(--ink2); font-size:14.5px; flex:1;}
-
-  .edu-rows{border-top:1px solid var(--line); font-family:'Inter',sans-serif;}
-  .edu-row{display:grid; grid-template-columns:96px 1fr auto; gap:16px; padding:16px 0; border-bottom:1px solid var(--line); align-items:baseline;}
-  @media(max-width:520px){.edu-row{grid-template-columns:1fr; gap:2px;}}
-  .edu-row .year{font-size:12.5px; font-weight:600; color:var(--accent);}
-  .edu-row h3{font-size:15px; margin-bottom:2px; font-family:'Inter',sans-serif; font-weight:600;}
-  .edu-row .school{font-size:13.5px; color:var(--ink2);}
-  .edu-row .gpa{font-size:12.5px; font-weight:600; color:var(--ink2); text-align:right;}
-  @media(max-width:520px){.edu-row .gpa{text-align:left;}}
-
-  .ach-rows{border-top:1px solid var(--line); font-family:'Inter',sans-serif;}
-  .ach-row{padding:18px 0; border-bottom:1px solid var(--line);}
-  .ach-row .h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
-  .ach-row .num{font-family:'Fraunces',serif; font-weight:600; color:var(--accent); font-size:19px;}
-  .ach-row h4{font-size:15px; font-family:'Inter',sans-serif; font-weight:600;}
-  .ach-row .org{font-size:12.5px; color:var(--ink3);}
-  .ach-row p{font-size:13.5px; color:var(--ink2); margin:6px 0 0;}
-
-  footer{padding:56px 0 150px; font-family:'Inter',sans-serif;}
-  footer h2{font-size:clamp(24px,3.6vw,32px); font-weight:500;}
-  footer > p{color:var(--ink2); font-size:15px; margin-top:14px; }
-  .contact-list{margin-top:26px; border-top:1px solid var(--line);}
-  .contact-list a{
-    display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--line);
-    font-size:14.5px; color:var(--ink); font-weight:500; transition:color .2s;
-  }
-  .contact-list a:hover{color:var(--accent);}
-  .contact-list a svg{width:13px; height:13px; color:var(--ink3); transition:transform .2s;}
-  .contact-list a:hover svg{transform:translateX(3px); color:var(--accent);}
-  .foot-meta{margin-top:22px; font-size:11.5px; color:var(--ink3); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
-
-  .reveal{opacity:0; transform:translateY(10px); transition:opacity .6s ease, transform .6s ease;}
-  .reveal.in{opacity:1; transform:none;}
-</style>
+<link rel="stylesheet" href="styles.css">
+<script>
+  try{
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+  }catch(e){}
+</script>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
-<div id="progress"></div>
+<div id="progress" aria-hidden="true"></div>
 
 <div class="mobile-bar">
   <a href="#top" class="mb-mark">HN</a>
   <div style="display:flex; gap:10px;">
-    <button class="icon-btn" id="themeBtnM" type="button" title="Toggle theme">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <button class="icon-btn theme-btn" id="themeBtnM" type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     </button>
-    <button class="icon-btn" id="navtoggle" type="button" title="Menu">
+    <button class="icon-btn" id="navtoggle" type="button" title="Menu" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
   </div>
 </div>
-<div class="mobile-nav" id="mobileNav">
+<nav class="mobile-nav" id="mobileNav" aria-label="Sections">
   <a href="#top">About</a>
   <a href="#research">Current work</a>
-  <a href="#publications">Publications</a>
-  <a href="#datasets">Datasets</a>
   <a href="#experience">Research</a>
-  <a href="#mentoring">Mentoring</a>
   <a href="#projects">Projects</a>
-  <a href="#coursework">MSc coursework</a>
-  <a href="#bsc-coursework">Undergrad coursework</a>
-  <a href="#skills">Skills</a>
+  <a href="#datasets">Datasets</a>
+  <a href="#publications">Publications</a>
+  <a href="#mentoring">Teaching</a>
   <a href="#education">Education</a>
+  <a href="#skills">Skills</a>
   <a href="#achievements">Achievements</a>
   <a href="#contact">Contact</a>
-</div>
+</nav>
 
 <div class="layout">
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Profile and navigation">
     <div class="sb-portrait">
       <img class="profile-photo" src="assets/humaira-anzum-neha-profile.jpeg" alt="Humaira Anzum Neha" loading="eager">
     </div>
     <div class="sb-name serif">Humaira<br>Anzum Neha</div>
     <div class="sb-tag">CSE Lecturer · MSc Student · PhD Applicant for Fall 2027</div>
-    <nav class="sb-nav" id="navlist">
+    <div class="sb-socials">
+        <a href="mailto:humaira.neha.grad@gmail.com" class="icon-btn" title="Email" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg></a>
+        <a href="https://scholar.google.com/citations?hl=en&amp;user=VP00CEEAAAAJ" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Google Scholar" aria-label="Google Scholar"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg></a>
+        <a href="https://github.com/humairaneha" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+        <a href="https://www.linkedin.com/in/humaira-neha-45684a11a" target="_blank" rel="noopener noreferrer" class="icon-btn" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      </div>
+    <nav class="sb-nav" id="navlist" aria-label="Sections">
       <a href="#top">About</a>
       <a href="#research">Current work</a>
-      <a href="#publications">Publications</a>
-      <a href="#datasets">Datasets</a>
       <a href="#experience">Research</a>
-      <a href="#mentoring">Mentoring</a>
       <a href="#projects">Projects</a>
-      <a href="#coursework">MSc coursework</a>
-      <a href="#bsc-coursework">Undergrad courses</a>
-      <a href="#skills">Skills</a>
+      <a href="#datasets">Datasets</a>
+      <a href="#publications">Publications</a>
+      <a href="#mentoring">Teaching</a>
       <a href="#education">Education</a>
+      <a href="#skills">Skills</a>
       <a href="#achievements">Achievements</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="sb-foot">
-      <div class="sb-socials">
-        <a href="mailto:humaira@cse.uiu.ac.bd" class="icon-btn" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6l9 7 9-7M4 5h16a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg></a>
-        <a href="https://scholar.google.com/citations?hl=en&amp;user=VP00CEEAAAAJ" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Google Scholar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 9l10 6 8-4.8V17h2V9L12 3z"/></svg></a>
-        <a href="https://github.com/humairaneha" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 00-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.95 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 015 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0012 2z"/></svg></a>
-      </div>
-      <button class="icon-btn" id="themeBtn" type="button" title="Toggle theme">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <button class="theme-pill theme-btn" id="themeBtn" type="button" title="Switch to dark mode" aria-label="Switch to dark mode">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lbl-dark">Dark mode</span><span class="lbl-light">Light mode</span>
       </button>
     </div>
   </aside>
 
-  <main>
+  <main id="main" tabindex="-1">
 
     <section class="hero" id="top" style="border-top:none;">
-      <div class="eyebrow"><span class="dot"></span>Open to PhD opportunities — Fall 2027</div>
+      <div class="eyebrow"><span class="dot"></span>Seeking PhD opportunities — Fall 2027</div>
       <h1>Humaira Anzum Neha</h1>
-      <p class="body">I am a Lecturer in the Department of Computer Science and Engineering at United International University and an M.Sc. student at BRAC University. My research interests lie at the intersection of human-centered AI, multimodal AI, computer vision, natural language processing, human–computer interaction, and accessibility.</p>
+      <div class="hero-links">
+        <a href="mailto:humaira.neha.grad@gmail.com" class="repo-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>Email</a>
+        <a href="https://scholar.google.com/citations?hl=en&amp;user=VP00CEEAAAAJ" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>Google Scholar</a>
+        <a href="https://github.com/humairaneha" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub</a>
+        <a href="https://www.linkedin.com/in/humaira-neha-45684a11a" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+      </div>
+      <p class="body">I am a Lecturer in the Department of Computer Science and Engineering at United International University and an M.Sc. student at BRAC University. My research interests lie at the intersection of human-centered AI, multimodal AI, Computer Vision, natural language processing, human–computer interaction, and accessibility.</p>
       <p class="body">My research experience highlights my interest in both developing intelligent systems and understanding the people they are designed to serve. My previous work has focused on assistive technology and digital health. Currently, I am conducting a qualitative HCI study with a marginalized community and exploring a model-agnostic visual prompting approach for training-free long-video understanding.</p>
-      <p class="body">I am seeking <strong>PhD opportunities for Fall 2027</strong> with a focus on human-centered AI. I aim to combine computer vision, NLP, and HCI to develop intelligent systems that respond to real-world needs, reduce everyday burdens, and remain accessible across diverse abilities, backgrounds, and contexts.</p>
+      <p class="body">I am seeking <strong>PhD opportunities for Fall 2027</strong> with a focus on human-centered AI. I aim to combine Computer Vision, NLP, and HCI to develop intelligent systems that respond to real-world needs, reduce everyday burdens, and remain accessible across diverse abilities, backgrounds, and contexts.</p>
       <div class="hero-cta">
         <a href="#research" class="btn btn-solid">See current work</a>
         <a href="assets/humaira_anzum_neha_cv.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline">View CV</a>
@@ -399,67 +124,164 @@
       <div class="sec-head">
         <div class="kicker">Current research</div>
         <h2>Ongoing work</h2>
-        <p>Current research in human–computer interaction and computer vision.</p>
+        <p>Current research in human–computer interaction and multimodal AI.</p>
       </div>
 
       <div class="work-entry reveal">
-        <div class="work-status"><span class="dot"></span><span>In progress</span><span class="field">HCI · Accessibility</span></div>
-        <h3>Qualitative HCI research with a marginalized community</h3>
-        <p>Conducting a qualitative HCI study with a marginalized community to understand their experiences, perspectives, and needs in relation to technology.</p>
-        <div class="venue">Ongoing exploratory research</div>
-        <button class="more-toggle" data-target="m1" type="button">
+        <div class="work-status"><span class="dot"></span><span>Under review</span><span class="field">HCI · Accessibility</span></div>
+        <h3>AI-assisted speech editing for people who stutter</h3>
+        <p>A qualitative HCI study of how people who stutter in Bangladesh use video to represent themselves and their community, their current editing practices, and their expectations of AI-assisted video and speech editing tools.</p>
+        <div class="venue">Manuscript under review · 2026</div>
+        <button class="more-toggle" data-target="m1" type="button" aria-expanded="false" aria-controls="m1">
           More on this project
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="more-panel" id="m1">
-          <div class="inner">This research centers the perspectives of a marginalized community through qualitative inquiry. Further details will be shared when the study is ready for public release.</div>
+          <div class="inner">I conducted an onboarding workshop and semi-structured interviews with eight participants, analyzed the data using reflexive thematic analysis, and derived design implications for more inclusive AI tools.</div>
         </div>
       </div>
 
       <div class="work-entry reveal">
-        <div class="work-status"><span class="dot"></span><span>In progress</span><span class="field">Computer Vision · Multimodal AI</span></div>
-        <h3>Model-agnostic visual prompting for training-free long-video understanding</h3>
-        <p>Exploring a model-agnostic visual prompting approach that organizes selected video frames into visual prompts for long-video question answering, without task-specific training or changes to the underlying model.</p>
-        <div class="venue">Ongoing exploratory research</div>
-        <button class="more-toggle" data-target="m2" type="button">
+        <div class="work-status"><span class="dot"></span><span>In progress</span><span class="field">Vision-Language Models · Accessibility</span></div>
+        <h3>Reliability of vision-language models in reading expiry dates</h3>
+        <p>A project that studies how reliably vision-language models read and reason across diverse expiry date formats for blind and low-vision users, along with strategies to improve their performance.</p>
+        <div class="venue">Ongoing research · United International University</div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="sec-head">
+        <div class="kicker">Previous research</div>
+        <h2>Research experience</h2>
+        <p>Undergraduate research projects completed at KUET.</p>
+      </div>
+      <div class="ptimeline">
+        <div class="p-item reveal">
+          <span class="year">2024</span><span class="author-badge">First author</span>
+          <h3>Automated object identification for the visually impaired</h3>
+          <div class="supervisor">Supervised by Dr. Md. Sheikh Sadi, Professor of CSE, KUET</div>
+          <p>An edge-deployable system for object detection, Bangladeshi currency and denomination recognition, and face recognition. The project also included the collection and annotation of custom image datasets, including Bangladeshi currency images, for model training and evaluation.</p>
+          <p>Built a custom annotated dataset of ~21,000 images, trained YOLOv5 for object and banknote detection, used ResNet-50 for face recognition, and deployed on a Raspberry Pi. Achieved 98.2% mAP for objects, 99.7% top-1 accuracy for currency, and 97.6% accuracy for face recognition.</p>
+          <div class="stack">Python · PyTorch · OpenCV · YOLOv5 · ResNet-50 · Raspberry Pi · Dataset collection and annotation</div>
+          <a href="https://github.com/humairaneha/Automated-object-identification-for-visually-impaired" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>View repository</a>
+          <a href="https://www.kaggle.com/datasets/humairaanzumneha/final-dataset" target="_blank" rel="noopener noreferrer" class="repo-link">Object dataset</a>
+          <a href="https://www.kaggle.com/datasets/humairaanzumneha/currencyds" target="_blank" rel="noopener noreferrer" class="repo-link">Currency dataset</a>
+          <div class="demo-grid" aria-label="Object identification demonstrations">
+            <figure>
+              <video controls preload="metadata" playsinline poster="assets/object-id-currency-poster.jpg">
+                <source src="assets/object-id-currency-demo.mp4" type="video/mp4">
+              </video>
+              <figcaption>Currency-denomination recognition</figcaption>
+            </figure>
+            <figure>
+              <video controls preload="metadata" playsinline poster="assets/object-id-stairs-poster.jpg">
+                <source src="assets/object-id-stairs-demo.mp4" type="video/mp4">
+              </video>
+              <figcaption>Stair detection</figcaption>
+            </figure>
+            <figure>
+              <video controls preload="metadata" playsinline poster="assets/object-id-person-poster.jpg">
+                <source src="assets/object-id-person-demo.mp4" type="video/mp4">
+              </video>
+              <figcaption>Person detection</figcaption>
+            </figure>
+          </div>
+          <button class="more-toggle" data-target="p1" type="button" aria-expanded="false" aria-controls="p1">
+            More on this project
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="more-panel" id="p1">
+            <div class="inner">Developed as an undergraduate research project at KUET, the detection pipeline runs fully on-device and was tested without an internet connection. A key contribution was developing custom training data through image collection, organization, and annotation, including a dataset of Bangladeshi banknotes collected and labeled by our team.</div>
+          </div>
+        </div>
+        <div class="p-item reveal">
+          <span class="year">2024</span><span class="author-badge">Co-author</span>
+          <h3>An assistive device for enhanced navigation and reading</h3>
+          <div class="supervisor">Supervised by Dr. Md. Sheikh Sadi, Professor of CSE, KUET</div>
+          <p>Assistive smart glasses that combine real-time obstacle detection, fall alerts, and on-device text recognition to read printed material aloud.</p>
+          <p>Obstacle avoidance uses Time-of-Flight sensors, fall detection with caregiver alerts uses an accelerometer, and OCR with text-to-speech reads printed text. OCR achieved 93.03% character accuracy (6.97% CER) and 9.46% WER on 50 test documents.</p>
+          <div class="stack">Python · Raspberry Pi · Tesseract OCR · ToF sensors · Accelerometer</div>
+          <a href="https://github.com/sadman15019/Assistive-Device-for-the-Visually-Impaired-for-Enhanced-Navigation-and-Reading" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>View repository</a>
+          <a href="https://ieeexplore.ieee.org/abstract/document/11024586" target="_blank" rel="noopener noreferrer" class="repo-link">View publication</a>
+          <button class="more-toggle" data-target="p2" type="button" aria-expanded="false" aria-controls="p2">
+            More on this project
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="more-panel" id="p2">
+            <div class="inner">The wearable combines obstacle detection, fall alerts, and an OCR-based reading function within a single assistive device.</div>
+          </div>
+        </div>
+        <div class="p-item reveal">
+          <span class="year">2023</span><span class="author-badge">First author</span>
+          <h3>Non-invasive measurement of blood components via a mobile app</h3>
+          <div class="supervisor">Supervised by S M Taslim Uddin Raju, Lecturer of CSE, KUET</div>
+          <p>A mobile application that records a fingertip video under near-infrared light, extracts a photoplethysmography signal, and uses a neural network to estimate glucose and hemoglobin levels without invasive sampling.</p>
+          <p>Designed for users with limited smartphone experience, with camera settings calibrated for consistent video quality across lighting and devices. Achieved R² = 0.81 and an MAE of 0.68 g/dL for hemoglobin against invasive tests.</p>
+          <div class="stack">Kotlin · Android Studio · Python · PPG Analysis · OpenCV</div>
+          <a href="https://ieeexplore.ieee.org/abstract/document/10441186" target="_blank" rel="noopener noreferrer" class="repo-link">View publication</a>
+          <a href="https://github.com/sadman15019/CSE-3200-final" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
+          <img class="demo-visual" src="assets/glucoshema-system-overview.png" alt="Glucoshema application workflow showing user information, fingertip video capture, signal processing, and blood-component prediction screens" loading="lazy">
+          <div class="visual-caption">Application workflow: user input, fingertip video acquisition, PPG feature extraction, and blood-component prediction.</div>
+          <button class="more-toggle" data-target="p3" type="button" aria-expanded="false" aria-controls="p3">
+            More on this project
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="more-panel" id="p3">
+            <div class="inner">The main challenge was maintaining signal quality because fingertip pressure and ambient light can affect the PPG waveform. The pipeline therefore applies filtering and normalization before model prediction.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="sec-head">
+        <div class="kicker">Selected work</div>
+        <h2>Academic projects</h2>
+        <p>Selected software and artificial intelligence projects completed through coursework.</p>
+      </div>
+      <div class="proj-item reveal">
+        <h3>Query-guided visual prompting for training-free long-video understanding</h3>
+        <p>A model-agnostic, query-guided asymmetric grid composition method that arranges selected frames into visual prompts, with no fine-tuning or model changes. Using CLIP-based frame scoring with Qwen2.5-VL-7B, it improved pair accuracy on the MF2 benchmark from 16.9% to 23.5% over the <a href="https://openaccess.thecvf.com/content/CVPR2026/papers/Doorenbos_Video_Panels_for_Long_Video_Understanding_CVPR_2026_paper.pdf" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">Video Panels</a> baseline.</p>
+        <div class="stack">Python · PyTorch · Vision-language models · 2026</div>
+        <a href="https://github.com/sadman15019/A-Training-Free-Approach-for-Long-Video-Understanding" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>View repository</a>
+        <img class="demo-visual" src="assets/long-video-example.jpg" alt="Example question about the colour of Gabriel García Márquez's car: the baseline's uniform panels lead the VLM to answer Red, while our query-guided panels enlarge the relevant frame and the VLM answers Green correctly" loading="lazy">
+        <div class="visual-caption">Example: baseline panels lead the VLM to the wrong answer, while query-guided panels enlarge the relevant frame and the VLM answers correctly.</div>
+        <button class="more-toggle" data-target="m2" type="button" aria-expanded="false" aria-controls="m2">
           More on this project
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="more-panel" id="m2">
           <div class="inner">The approach selects and structures relevant visual evidence at inference time so that different vision-language models can reason over long videos without fine-tuning or architectural modification. It is being evaluated on established long-video question-answering datasets.</div>
         </div>
       </div>
-    </section>
-
-    <section id="publications">
-      <div class="sec-head">
-        <div class="kicker">Research output</div>
-        <h2>Publications</h2>
-        <p>Peer-reviewed conference papers spanning digital health and assistive computer vision.</p>
+      <div class="proj-item reveal">
+        <h3>Multimodal GNN–BERT fusion for music tagging and retrieval</h3>
+        <p>Built audio graph models (GraphSAGE, GAT) and fused them with BERT text embeddings for multi-label tagging on MusicCaps, GTZAN, and MagnaTagATune. Cross-attention fusion raised micro-F1 on MagnaTagATune from 0.38 (BERT-only) to 0.52.</p>
+        <div class="stack">PyTorch · PyTorch Geometric · BERT · 2026</div>
+        <a href="https://github.com/humairaneha/gnn-bert-music-context" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>View repository</a>
+        <a href="https://huggingface.co/datasets/humairaneha/MusicCaps-Curated-Tags" target="_blank" rel="noopener noreferrer" class="repo-link">MusicCaps-Curated-Tags</a>
       </div>
-      <div class="ptimeline">
-        <div class="p-item reveal">
-          <span class="year">2024</span><span class="author-badge">First author</span>
-          <h3>Automated Object Identification for the Visually Impaired</h3>
-          <p><strong>Humaira Anzum Neha</strong>, Muhammad Sheikh Sadi, Md. Repon Islam, and Sadman Sakib.</p>
-          <div class="supervisor">2024 27th International Conference on Computer and Information Technology (ICCIT)</div>
-          <div class="stack">Research contribution: custom image collection and annotation for object and Bangladeshi currency recognition.</div>
-          <a href="https://ieeexplore.ieee.org/abstract/document/11022362" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
-        </div>
-        <div class="p-item reveal">
-          <span class="year">2024</span><span class="author-badge">Co-author</span>
-          <h3>An Assistive Device for the Visually Impaired for Enhanced Navigation and Reading</h3>
-          <p>Sadman Sakib, Muhammad Sheikh Sadi, Md. Shanjid Arefin, Md. Repon Islam, and <strong>Humaira Anzum Neha</strong>.</p>
-          <div class="supervisor">2024 13th International Conference on Electrical and Computer Engineering (ICECE)</div>
-          <a href="https://ieeexplore.ieee.org/abstract/document/11024586" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
-        </div>
-        <div class="p-item reveal">
-          <span class="year">2023</span><span class="author-badge">First author</span>
-          <h3>Mobile Application to Collect Data and Measure Blood Component Level in a Non-Invasive Way</h3>
-          <p><strong>Humaira Anzum Neha</strong>, Sadman Sakib, Farhan Sadaf, and S. M. Taslim Uddin Raju.</p>
-          <div class="supervisor">2023 26th International Conference on Computer and Information Technology (ICCIT)</div>
-          <a href="https://ieeexplore.ieee.org/abstract/document/10441186" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
-        </div>
+      <div class="proj-item reveal">
+        <h3>Abalone AI</h3>
+        <p>A playable Abalone board game featuring an AI opponent developed with Minimax search and alpha–beta pruning.</p>
+        <div class="stack">Python · Pygame · 2023</div>
+        <a href="https://github.com/humairaneha/AbaloneAI" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
+        <img class="demo-visual" id="abaloneGif" src="assets/abalone-gameplay.gif" data-gif="assets/abalone-gameplay.gif" data-still="assets/abalone-gameplay.png" alt="Animated Abalone game in which a player and the Minimax AI opponent take turns moving marbles" loading="lazy" style="max-width:560px;">
+        <button class="gif-toggle" id="gifToggle" type="button" aria-pressed="false" aria-controls="abaloneGif">Pause animation</button>
+      </div>
+      <div class="proj-item reveal">
+        <h3>Smart<span class="amp">&amp;</span>Safe</h3>
+        <p>A marketplace for used smartphones with national identity verification, automated IMEI screening, and an administrative dashboard.</p>
+        <div class="stack">Bootstrap · JavaScript · ASP.NET · 2022</div>
+        <a href="https://github.com/humairaneha/Smart-and-Safe" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
+        <img class="demo-visual" src="assets/smart-and-safe-home.jpg" alt="Smart&amp;Safe home page with buy, sell, and exchange options" loading="lazy" style="max-width:560px; aspect-ratio:16/10; object-fit:cover; object-position:top;">
+      </div>
+      <div class="proj-item reveal">
+        <h3>Together</h3>
+        <p>A mobile application that helps teams assign tasks, track responsibilities, and manage shared deadlines.</p>
+        <div class="stack">Java · Firebase · Android Studio · 2021</div>
+        <a href="https://github.com/humairaneha/together" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
+        <img class="demo-visual" src="assets/together-app-screens.jpg" alt="Together app screens: login, navigation drawer, and task calendar" loading="lazy" style="max-width:560px;">
       </div>
     </section>
 
@@ -496,81 +318,34 @@
       </div>
     </section>
 
-    <section id="experience">
+    <section id="publications">
       <div class="sec-head">
-        <div class="kicker">Previous research</div>
-        <h2>Research experience</h2>
-        <p>Selected undergraduate research projects completed at KUET.</p>
+        <div class="kicker">Research output</div>
+        <h2>Publications</h2>
+        <p>Peer-reviewed conference papers spanning digital health and assistive Computer Vision.</p>
       </div>
       <div class="ptimeline">
         <div class="p-item reveal">
           <span class="year">2024</span><span class="author-badge">First author</span>
-          <h3>Automated object identification for the visually impaired</h3>
-          <div class="supervisor">Supervised by Dr. Md. Sheikh Sadi, Professor of CSE, KUET</div>
-          <p>An edge-deployable system for object detection, Bangladeshi currency and denomination recognition, and face recognition. The project also included the collection and annotation of custom image datasets, including Bangladeshi currency images, for model training and evaluation.</p>
-          <div class="stack">Python · PyTorch · OpenCV · YOLOv5 · Dataset collection and annotation</div>
-          <a href="https://github.com/humairaneha/Automated-object-identification-for-visually-impaired" target="_blank" rel="noopener noreferrer" class="repo-link"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.1.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5z"/></svg>View repository</a>
-          <a href="https://www.kaggle.com/datasets/humairaanzumneha/final-dataset" target="_blank" rel="noopener noreferrer" class="repo-link">Object dataset</a>
-          <a href="https://www.kaggle.com/datasets/humairaanzumneha/currencyds" target="_blank" rel="noopener noreferrer" class="repo-link">Currency dataset</a>
-          <div class="demo-grid" aria-label="Object identification demonstrations">
-            <figure>
-              <video controls preload="metadata" playsinline poster="assets/object-id-currency-poster.jpg">
-                <source src="assets/object-id-currency-demo.mp4" type="video/mp4">
-              </video>
-              <figcaption>Currency-denomination recognition</figcaption>
-            </figure>
-            <figure>
-              <video controls preload="metadata" playsinline poster="assets/object-id-stairs-poster.jpg">
-                <source src="assets/object-id-stairs-demo.mp4" type="video/mp4">
-              </video>
-              <figcaption>Stair detection</figcaption>
-            </figure>
-            <figure>
-              <video controls preload="metadata" playsinline poster="assets/object-id-person-poster.jpg">
-                <source src="assets/object-id-person-demo.mp4" type="video/mp4">
-              </video>
-              <figcaption>Person detection</figcaption>
-            </figure>
-          </div>
-          <button class="more-toggle" data-target="p1" type="button">
-            More on this project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="more-panel" id="p1">
-            <div class="inner">Developed as an undergraduate research project at KUET, the detection pipeline runs fully on-device and was tested without an internet connection. A key contribution was developing custom training data through image collection, organization, and annotation, including a dataset of Bangladeshi banknotes collected and labeled by our team.</div>
-          </div>
+          <h3>Automated Object Identification for the Visually Impaired</h3>
+          <p><strong>Humaira Anzum Neha</strong>, Muhammad Sheikh Sadi, Md. Repon Islam, and Sadman Sakib.</p>
+          <div class="supervisor">2024 27th International Conference on Computer and Information Technology (ICCIT)</div>
+          <div class="stack">Research contribution: custom image collection and annotation for object and Bangladeshi currency recognition.</div>
+          <a href="https://ieeexplore.ieee.org/abstract/document/11022362" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
         </div>
         <div class="p-item reveal">
           <span class="year">2024</span><span class="author-badge">Co-author</span>
-          <h3>An assistive device for enhanced navigation and reading</h3>
-          <div class="supervisor">Supervised by Dr. Md. Sheikh Sadi, Professor of CSE, KUET</div>
-          <p>Assistive smart glasses that combine real-time obstacle detection, fall alerts, and on-device text recognition to read printed material aloud.</p>
-          <div class="stack">Python · PyTorch · OpenCV · YOLOv5 · Raspberry Pi · OCR</div>
-          <a href="https://ieeexplore.ieee.org/abstract/document/11024586" target="_blank" rel="noopener noreferrer" class="repo-link">View publication</a>
-          <button class="more-toggle" data-target="p2" type="button">
-            More on this project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="more-panel" id="p2">
-            <div class="inner">The wearable combines obstacle detection, fall alerts, and an OCR-based reading function within a single assistive device.</div>
-          </div>
+          <h3>An Assistive Device for the Visually Impaired for Enhanced Navigation and Reading</h3>
+          <p>Sadman Sakib, Muhammad Sheikh Sadi, Md. Shanjid Arefin, Md. Repon Islam, and <strong>Humaira Anzum Neha</strong>.</p>
+          <div class="supervisor">2024 13th International Conference on Electrical and Computer Engineering (ICECE)</div>
+          <a href="https://ieeexplore.ieee.org/abstract/document/11024586" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
         </div>
         <div class="p-item reveal">
           <span class="year">2023</span><span class="author-badge">First author</span>
-          <h3>Non-invasive measurement of blood components via a mobile app</h3>
-          <div class="supervisor">Supervised by S M Taslim Uddin Raju, Lecturer of CSE, KUET</div>
-          <p>A mobile application that records a fingertip video under near-infrared light, extracts a photoplethysmography signal, and uses a neural network to estimate glucose and hemoglobin levels without invasive sampling.</p>
-          <div class="stack">Kotlin · Android Studio · Python · PPG Analysis · OpenCV</div>
-          <a href="https://ieeexplore.ieee.org/abstract/document/10441186" target="_blank" rel="noopener noreferrer" class="repo-link">View publication</a>
-          <img class="demo-visual" src="assets/glucoshema-system-overview.png" alt="Glucoshema application workflow showing user information, fingertip video capture, signal processing, and blood-component prediction screens" loading="lazy">
-          <div class="visual-caption">Application workflow: user input, fingertip video acquisition, PPG feature extraction, and blood-component prediction.</div>
-          <button class="more-toggle" data-target="p3" type="button">
-            More on this project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-          <div class="more-panel" id="p3">
-            <div class="inner">The main challenge was maintaining signal quality because fingertip pressure and ambient light can affect the PPG waveform. The pipeline therefore applies filtering and normalization before model prediction.</div>
-          </div>
+          <h3>Mobile Application to Collect Data and Measure Blood Component Level in a Non-Invasive Way</h3>
+          <p><strong>Humaira Anzum Neha</strong>, Sadman Sakib, Farhan Sadaf, and S. M. Taslim Uddin Raju.</p>
+          <div class="supervisor">2023 26th International Conference on Computer and Information Technology (ICCIT)</div>
+          <a href="https://ieeexplore.ieee.org/abstract/document/10441186" target="_blank" rel="noopener noreferrer" class="repo-link">View on IEEE Xplore</a>
         </div>
       </div>
     </section>
@@ -582,6 +357,13 @@
         <p>Selected teaching, thesis supervision, and student mentoring activities.</p>
       </div>
       <div class="row-list">
+        <div class="row-item reveal">
+          <div>
+            <div class="rt">Lecturer, Department of Computer Science and Engineering</div>
+            <div class="rs">United International University · Taught Data Structures and Algorithms, Database Management Systems, Data Mining, Object Oriented Programming, and Computer Architecture</div>
+          </div>
+          <span class="row-badge ongoing">Aug 2024 – now</span>
+        </div>
         <div class="row-item reveal">
           <div>
             <div class="rt">Supervising an undergraduate thesis group</div>
@@ -596,94 +378,6 @@
           </div>
           <span class="row-badge past">Prize-winning</span>
         </div>
-      </div>
-    </section>
-
-    <section id="projects">
-      <div class="sec-head">
-        <div class="kicker">Selected work</div>
-        <h2>Academic projects</h2>
-        <p>Selected software and artificial intelligence projects completed through coursework.</p>
-      </div>
-      <div class="proj-item reveal">
-        <h3>Abalone AI</h3>
-        <p>A playable Abalone board game featuring an AI opponent developed with Minimax search and alpha–beta pruning.</p>
-        <div class="stack">Python · Pygame</div>
-        <a href="https://github.com/humairaneha/AbaloneAI" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
-      </div>
-      <div class="proj-item reveal">
-        <h3>Smart<span class="amp">&amp;</span>Safe</h3>
-        <p>A marketplace for used smartphones with national identity verification, automated IMEI screening, and an administrative dashboard.</p>
-        <div class="stack">Bootstrap · JavaScript · ASP.NET</div>
-        <a href="https://github.com/humairaneha/Smart-and-Safe" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
-      </div>
-      <div class="proj-item reveal">
-        <h3>Together</h3>
-        <p>A mobile application that helps teams assign tasks, track responsibilities, and manage shared deadlines.</p>
-        <div class="stack">Java · Firebase · Android Studio</div>
-        <a href="https://github.com/humairaneha/together" target="_blank" rel="noopener noreferrer" class="repo-link">View repository</a>
-      </div>
-    </section>
-
-    <section id="coursework">
-      <div class="sec-head">
-        <div class="kicker">MSc</div>
-        <h2>Coursework</h2>
-        <p>BRAC University — 12 credits completed with a CGPA of 4.00/4.00.</p>
-      </div>
-      <div class="course-cols">
-        <div>
-          <h4>Completed</h4>
-          <ul>
-            <li>Research Methodology and Seminar <span class="badge">Done</span></li>
-            <li>Advanced Natural Language Processing <span class="badge">Done</span></li>
-             <li>Neural Networks and Fuzzy Systems <span class="badge">Done</span></li>
-            <li>Deep Learning for Computer Vision <span class="badge">Done</span></li>
-          </ul>
-        </div>
-        <div>
-          <h4>This semester</h4>
-          <ul>
-            <li> Data Mining <span class="badge now">Ongoing</span></li>
-            <li> Fairness, Ethics and Explainability in AI <span class="badge now">Ongoing</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="bsc-coursework">
-      <div class="sec-head">
-        <div class="kicker">KUET</div>
-        <h2>Key undergrad coursework</h2>
-        <p>Selected coursework supporting my interdisciplinary work across AI, data, language, and vision.</p>
-      </div>
-      <div class="course-cols">
-        <div>
-          <h4>Data &amp; quantitative methods</h4>
-          <ul>
-            <li>Applied Statistics <span class="badge">BSc</span></li>
-            <li>Data Mining <span class="badge">BSc</span></li>
-          </ul>
-        </div>
-        <div>
-          <h4>AI, language &amp; vision</h4>
-          <ul>
-              <li>Artificial Intelligence <span class="badge">BSc</span></li>
-            <li>Image Processing <span class="badge">BSc</span></li>
-            <li>Natural Language Processing <span class="badge">BSc</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="skills">
-      <div class="sec-head"><div class="kicker">Technical background</div><h2>Skills</h2></div>
-      <div>
-        <div class="skill-line"><div class="k">Programming</div><div class="v">Python, C/C++, Java, JavaScript, SQL</div></div>
-        <div class="skill-line"><div class="k">AI &amp; ML</div><div class="v">PyTorch, OpenCV, Hugging Face Transformers, Scikit-Learn</div></div>
-        <div class="skill-line"><div class="k">Web &amp; mobile</div><div class="v">HTML/CSS, Tailwind CSS, ASP.NET, Firebase, Android Studio</div></div>
-        <div class="skill-line"><div class="k">Database</div><div class="v">MySQL, Oracle</div></div>
-        <div class="skill-line"><div class="k">Tools</div><div class="v">Git &amp; GitHub, LaTeX, OpenGL</div></div>
       </div>
     </section>
 
@@ -711,6 +405,55 @@
           <span class="gpa">5.00 / 5.00</span>
         </div>
       </div>
+      <h3 class="label-sm" style="margin-top:36px;">MSc coursework · BRAC University</h3>
+      <div class="course-cols">
+        <div>
+          <h4>Completed</h4>
+          <ul>
+            <li>Research Methodology and Seminar <span class="badge">Done</span></li>
+            <li>Advanced Natural Language Processing <span class="badge">Done</span></li>
+             <li>Neural Networks and Fuzzy Systems <span class="badge">Done</span></li>
+            <li>Deep Learning for Computer Vision <span class="badge">Done</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4>This semester</h4>
+          <ul>
+            <li> Data Mining <span class="badge now">Ongoing</span></li>
+            <li> Fairness, Ethics and Explainability in AI <span class="badge now">Ongoing</span></li>
+          </ul>
+        </div>
+      </div>
+      <h3 class="label-sm" style="margin-top:36px;">Key undergrad coursework · KUET</h3>
+      <div class="course-cols">
+        <div>
+          <h4>Data &amp; quantitative methods</h4>
+          <ul>
+            <li>Applied Statistics <span class="badge">BSc</span></li>
+            <li>Data Mining <span class="badge">BSc</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4>AI, language &amp; vision</h4>
+          <ul>
+              <li>Artificial Intelligence <span class="badge">BSc</span></li>
+            <li>Image Processing <span class="badge">BSc</span></li>
+            <li>Natural Language Processing <span class="badge">BSc</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="sec-head"><div class="kicker">Technical background</div><h2>Skills</h2></div>
+      <div>
+        <div class="skill-line"><div class="k">Programming</div><div class="v">Python, C, C++, Java, Kotlin, JavaScript, Bash, SQL</div></div>
+        <div class="skill-line"><div class="k">Deep learning</div><div class="v">PyTorch, TensorFlow, Keras, Hugging Face</div></div>
+        <div class="skill-line"><div class="k">AI tools</div><div class="v">OpenAI Codex, Claude</div></div>
+        <div class="skill-line"><div class="k">Developer tools</div><div class="v">Anaconda, Jupyter, Arduino, Raspberry Pi, Git, MS Visual C++, VS Code</div></div>
+        <div class="skill-line"><div class="k">Mobile</div><div class="v">Android Studio</div></div>
+        <div class="skill-line"><div class="k">Operating systems</div><div class="v">Linux, macOS, Windows</div></div>
+      </div>
     </section>
 
     <section id="achievements">
@@ -718,7 +461,7 @@
       <div class="ach-rows">
         <div class="ach-row">
           <div class="h"><span class="num">3×</span><h4>Dean's List Award</h4><span class="org">— KUET</span></div>
-          <p>Awarded across multiple semesters for consistent academic performance.</p>
+          <p>Awarded for three consecutive years for consistent academic performance.</p>
           <a href="https://drive.google.com/file/d/1UTtLE73JZqtGaB2giHEFNOITd_0Lzvje/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="repo-link">View certificate</a>
         </div>
         <div class="ach-row">
@@ -737,15 +480,15 @@
 
     <footer id="contact">
       <h2>Research opportunities</h2>
-      <p>I am seeking PhD opportunities for Fall 2027 in human-centered AI, computer vision, NLP, and HCI. I aim to develop intelligent systems that address practical needs and serve people across diverse abilities, backgrounds, and contexts.</p>
+      <p>I am seeking PhD opportunities for Fall 2027 in human-centered AI, Computer Vision, NLP, and HCI. I aim to develop intelligent systems that address practical needs and serve people across diverse abilities, backgrounds, and contexts.</p>
       <div class="contact-list">
         <a href="mailto:humaira@cse.uiu.ac.bd">UIU Email <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a href="mailto:humairaanzumn@gmail.com">Personal Email <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="mailto:humaira.neha.grad@gmail.com">Personal Email <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a href="https://scholar.google.com/citations?hl=en&amp;user=VP00CEEAAAAJ" target="_blank" rel="noopener noreferrer">Google Scholar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a href="https://www.linkedin.com/in/humaira-neha-45684a11a" target="_blank" rel="noopener noreferrer">LinkedIn <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a href="https://github.com/humairaneha" target="_blank" rel="noopener noreferrer">GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <a href="https://cse.uiu.ac.bd/faculty/humaira-anzum-neha/" target="_blank" rel="noopener noreferrer">Faculty profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a href="assets/humaira-anzum-neha-cv.pdf" target="_blank" rel="noopener noreferrer">Curriculum vitae <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="assets/humaira_anzum_neha_cv.pdf" target="_blank" rel="noopener noreferrer">Curriculum vitae <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
       <div class="foot-meta">
         <span>Last updated August 2026</span>
@@ -763,14 +506,32 @@
     progress.style.width = scrolled + '%';
   });
 
-  function toggleTheme(){ document.documentElement.classList.toggle('dark'); }
+  function syncThemeLabels(){
+    const dark = document.documentElement.classList.contains('dark');
+    const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    document.querySelectorAll('.theme-btn').forEach(b => { b.title = label; b.setAttribute('aria-label', label); });
+  }
+  function toggleTheme(){
+    const dark = document.documentElement.classList.toggle('dark');
+    try{ localStorage.setItem('theme', dark ? 'dark' : 'light'); }catch(e){}
+    syncThemeLabels();
+  }
+  syncThemeLabels();
   document.getElementById('themeBtn').addEventListener('click', toggleTheme);
   document.getElementById('themeBtnM').addEventListener('click', toggleTheme);
 
   const navtoggle = document.getElementById('navtoggle');
   const mobileNav = document.getElementById('mobileNav');
-  navtoggle.addEventListener('click', () => mobileNav.classList.toggle('open'));
-  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+  function setMenu(open){
+    mobileNav.classList.toggle('open', open);
+    navtoggle.setAttribute('aria-expanded', open);
+    navtoggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  navtoggle.addEventListener('click', () => setMenu(!mobileNav.classList.contains('open')));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mobileNav.classList.contains('open')) { setMenu(false); navtoggle.focus(); }
+  });
 
   const allNavLinks = Array.from(document.querySelectorAll('#navlist a, #mobileNav a'));
   const hrefs = Array.from(new Set(allNavLinks.map(a => a.getAttribute('href'))));
@@ -801,9 +562,31 @@
       const panel = document.getElementById(btn.dataset.target);
       const open = panel.classList.toggle('open');
       btn.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open);
       btn.childNodes[0].textContent = open ? 'Less on this project ' : 'More on this project ';
     });
   });
+
+  // tell screen-reader users when a link opens a new tab
+  document.querySelectorAll('a[target="_blank"]').forEach(a => {
+    const note = document.createElement('span');
+    note.className = 'sr-only';
+    note.textContent = ' (opens in a new tab)';
+    a.appendChild(note);
+  });
+
+  // pausable Abalone animation; starts paused when the visitor prefers reduced motion
+  const gif = document.getElementById('abaloneGif');
+  const gifToggle = document.getElementById('gifToggle');
+  function setGifPaused(paused){
+    gif.src = paused ? gif.dataset.still : gif.dataset.gif;
+    gifToggle.textContent = paused ? 'Play animation' : 'Pause animation';
+    gifToggle.setAttribute('aria-pressed', paused);
+  }
+  if (gif && gifToggle) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setGifPaused(true);
+    gifToggle.addEventListener('click', () => setGifPaused(gifToggle.getAttribute('aria-pressed') !== 'true'));
+  }
 </script>
 
 </body>
