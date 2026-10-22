@@ -44,7 +44,35 @@ a{color:inherit; text-decoration:none;}
 .sidebar{
   width:25%; flex:0 0 25%; position:sticky; top:0; height:100vh; padding:42px 38px; box-sizing:border-box;
   display:flex; flex-direction:column; border-right:1px solid var(--line);
-  overflow:hidden;
+  overflow-y:auto; scrollbar-width:none;
+}
+.sidebar::-webkit-scrollbar{display:none;}
+/* centre the profile + nav block vertically; the theme button stays at the bottom */
+.sidebar > .sb-portrait{margin-top:auto;}
+@media(max-height:820px){
+  .sidebar{padding-top:26px; padding-bottom:20px;}
+  .sidebar .sb-portrait{width:104px;}
+  .sb-tag{margin-bottom:12px;}
+  .sb-socials{margin-bottom:12px;}
+  .sb-nav a{padding-top:3px; padding-bottom:3px;}
+}
+@media(max-height:740px){
+  .sidebar{padding-top:18px; padding-bottom:14px;}
+  .sidebar .sb-portrait{width:76px; margin-bottom:8px;}
+  .sb-name{font-size:19px;}
+  .sb-tag{font-size:12.5px; margin-bottom:10px;}
+  .sb-socials{margin:-2px 0 10px;}
+  .sb-socials .icon-btn{width:33px; height:33px;}
+  .sb-nav a{padding-top:2px; padding-bottom:2px; font-size:13.5px; line-height:1.5;}
+}
+@media(max-height:670px){
+  .sidebar{padding-top:12px; padding-bottom:8px;}
+  .sidebar .sb-portrait{width:52px; margin-bottom:6px;}
+  .sb-name{font-size:17px;}
+  .sb-tag{margin-bottom:8px;}
+  .sb-socials{margin:-2px 0 8px;}
+  .sb-nav a{padding-top:1px; padding-bottom:1px; font-size:13px; line-height:1.35;}
+  .sb-foot{padding-top:6px;}
 }
 @media(max-width:1320px){.sidebar{width:280px; flex:0 0 280px;}}
 .sb-portrait{
